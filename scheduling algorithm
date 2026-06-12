@@ -13,3 +13,98 @@ for i in matches:
     
     print("match {}: {} vs {}".format(pos,i[0],i[1]))
     pos = pos + 1
+
+
+
+
+from datetime import datetime, timedelta
+
+# Number of groups
+groups_count = int(input("Enter number of groups: "))
+
+groups = []
+
+# Get teams for each group
+for g in range(groups_count):
+    teams_count = int(input(f"\nEnter number of teams in Group {g + 1}: "))
+
+    teams = []
+    for i in range(teams_count):
+        team = input(f"Enter team {i + 1}: ")
+        teams.append(team)
+
+    groups.append(teams)
+
+matches = []
+
+# Same-group matches (single round)
+for group in groups:
+    for i in range(len(group) - 1):
+        for j in range(i + 1, len(group)):
+            matches.append((group[i], group[j]))
+
+# Different-group matches (home and away)
+for g1 in range(len(groups) - 1):
+    for g2 in range(g1 + 1, len(groups)):
+        for team1 in groups[g1]:
+            for team2 in groups[g2]:
+                matches.append((team1, team2))
+                matches.append((team2, team1))
+
+# Tournament start date
+start_date = input("\nEnter tournament start date (dd-mm-yyyy): ")
+current_date = datetime.strptime(start_date, "%d-%m-%Y")
+
+# Number of rest days required
+REST_DAYS = 2
+
+# Store last match date of each team
+last_played = {}
+
+scheduled_matches = []
+
+# Schedule matches
+for team1, team2 in matches:
+
+    while True:
+        valid = True
+
+        if team1 in last_played:
+            gap = (current_date - last_played[team1]).days
+            if gap < REST_DAYS + 1:
+                valid = False
+
+        if team2 in last_played:
+            gap = (current_date - last_played[team2]).days
+            if gap < REST_DAYS + 1:
+                valid = False
+
+        if valid:
+            break
+
+        current_date += timedelta(days=1)
+
+    scheduled_matches.append(
+        (current_date.strftime("%d-%m-%Y"), team1, team2)
+    )
+
+    last_played[team1] = current_date
+    last_played[team2] = current_date
+
+    current_date += timedelta(days=1)
+
+# Print groups
+print("\nGROUPS")
+print("-" * 30)
+
+for i, group in enumerate(groups, start=1):
+    print(f"Group {i}: {', '.join(group)}")
+
+# Print fixtures
+print("\nFIXTURE SCHEDULE")
+print("-" * 50)
+
+for no, (date, team1, team2) in enumerate(scheduled_matches, start=1):
+    print(f"Match {no:2} | {date} | {team1} vs {team2}")
+
+print("\nTotal Matches:", len(scheduled_matches))
