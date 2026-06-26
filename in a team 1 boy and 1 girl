@@ -1,0 +1,21 @@
+names = ["mahesh", "bopanna", "pragg", "pooja", "saniya", "madana", "rafel"]
+gender = ['M', 'M', 'M', 'F', 'F', 'F', 'M']
+
+male = []
+female = []
+
+# Separate male and female names
+for name, g in zip(names, gender):
+    if g == 'M':
+        male.append(name)
+    else:
+        female.append(name)
+
+print("{:<5} {:<10} {:<10}".format("S.No", "Male", "Female"))
+print("-" * 30)
+
+sno = 1
+for m in male:
+    for f in female:
+        print("{:<5} {:<10} {:<10}".format(sno, m, f))
+        sno += 1
